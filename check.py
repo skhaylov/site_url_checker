@@ -7,16 +7,20 @@ import random
 import requests
 
 
-def check_url(url):
-	headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:32.0) Gecko/20100101 Firefox/32.0',}
+def check_url(url, user_agents):
+	user_agent = user_agents[random.randint(0, len(user_agents) - 1)]
+	headers = {'user-agent': user_agent}
 
-	response = requests.get(url, headers = headers)
+	response = requests.get(url, headers=headers)
 	if response.status_code != 200:
 		print("{}\t{}\t{}".format(response.status_code, url, response.content))
-		return
 	else:
 		print("{}\t{}".format(response.status_code, url, response.content))
 
+
+def get_user_agents():
+	with open('user_agents.txt', 'r') as f:
+		return f.readlines()
 
 
 if __name__ == '__main__':
@@ -30,7 +34,9 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	with open(args.urls_list, 'r') as f:
+		user_agents = get_user_agents()
 		for url in f.readlines():
-				check_url(url)
-				time.sleep(random.randint(1, 3))
+				check_url(url, user_agents)
+				time.sleep(random.randint(2, 5))
+
 
